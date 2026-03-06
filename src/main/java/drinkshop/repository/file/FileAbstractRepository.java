@@ -23,8 +23,13 @@ public abstract class FileAbstractRepository<ID, E>
                 super.save(entity);
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e)
+        {
+            super.empty();
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
+                // Just create an empty file
+            } catch (IOException ignored) {
+            }
         }
     }
 

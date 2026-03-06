@@ -40,4 +40,8 @@ public abstract class AbstractRepository<ID, E>
     }
 
     protected abstract ID getId(E entity);
+
+    protected void empty() {
+        entities.clear();
+    }
 }
