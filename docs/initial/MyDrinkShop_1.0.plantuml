@@ -4,73 +4,174 @@
 top to bottom direction
 skinparam linetype ortho
 
-class AbstractRepository<ID, E>
-enum CategorieBautura << enumeration >>
-class CsvExporter
-class DailyReportService
-class DrinkShopApp
-class DrinkShopController
-class DrinkShopService
-class FileAbstractRepository<ID, E>
-class FileOrderRepository
+' ── Domain ──────────────────────────────────────────────────────────────────
+class CategorieBautura {
+  - id : int
+  - name : String
+}
+
+class TipBautura {
+  - id : int
+  - name : String
+}
+
+class Ingredient {
+  - id : int
+  - denumire : String
+}
+
+class Product {
+  - id : int
+  - nume : String
+  - pret : double
+}
+
+class IngredientReteta {
+  - cantitate : double
+}
+
+class Reteta {
+  - id : int
+  - name : String
+}
+
+class OrderItem {
+  - quantity : int
+}
+
+class Order {
+  - id : int
+  - data : LocalDate
+  - totalPrice : double
+}
+
+class Stoc {
+  - id : int
+  - cantitate : double
+  - stocMinim : double
+}
+
+' ── Repository ──────────────────────────────────────────────────────────────
+interface Repository<ID, E> << interface >>
+
+abstract class AbstractRepository<ID, E>
+abstract class FileAbstractRepository<ID, E>
+
+class FileCategorieRepository
+class FileTipRepository
+class FileIngredientRepository
 class FileProductRepository
+class FileOrderRepository
 class FileRetetaRepository
 class FileStocRepository
-class IngredientReteta
-class Order
-class OrderItem
-class OrderItemValidator
-class OrderService
-class OrderValidator
-class Product
-class ProductService
-class ProductTest
-class ProductValidator
-class ReceiptGenerator
-interface Repository<ID, E> << interface >>
-class Reteta
-class RetetaService
-class RetetaValidator
-class Stoc
-class StocService
-class StocValidator
-enum TipBautura << enumeration >>
-class ValidationException
-interface Validator<T> << interface >>
 
-AbstractRepository      -[#008200,dashed]-^  Repository             
-DailyReportService     "1" *-[#595959,plain]-> "repo\n1" Repository             
-DrinkShopController    "1" *-[#595959,plain]-> "service\n1" DrinkShopService       
-DrinkShopController    "1" *-[#595959,plain]-> "newRetetaList\n*" IngredientReteta       
-DrinkShopController    "1" *-[#595959,plain]-> "currentOrder\n1" Order                  
-DrinkShopController    "1" *-[#595959,plain]-> "currentOrderItems\n*" OrderItem              
-DrinkShopController    "1" *-[#595959,plain]-> "productList\n*" Product                
-DrinkShopController    "1" *-[#595959,plain]-> "retetaList\n*" Reteta                 
-DrinkShopService       "1" *-[#595959,plain]-> "report\n1" DailyReportService     
-DrinkShopService       "1" *-[#595959,plain]-> "orderService\n1" OrderService           
-DrinkShopService       "1" *-[#595959,plain]-> "productService\n1" ProductService         
-DrinkShopService       "1" *-[#595959,plain]-> "retetaService\n1" RetetaService          
-DrinkShopService       "1" *-[#595959,plain]-> "stocService\n1" StocService            
-FileAbstractRepository  -[#000082,plain]-^  AbstractRepository     
-FileOrderRepository     -[#000082,plain]-^  FileAbstractRepository 
-FileOrderRepository    "1" *-[#595959,plain]-> "productRepository\n1" Repository             
-FileProductRepository   -[#000082,plain]-^  FileAbstractRepository 
-FileRetetaRepository    -[#000082,plain]-^  FileAbstractRepository 
-FileStocRepository      -[#000082,plain]-^  FileAbstractRepository 
-Order                  "1" *-[#595959,plain]-> "items\n*" OrderItem              
-OrderItem              "1" *-[#595959,plain]-> "product\n1" Product                
-OrderItemValidator      -[#008200,dashed]-^  Validator              
-OrderService           "1" *-[#595959,plain]-> "orderRepo\n1" Repository             
-OrderValidator         "1" *-[#595959,plain]-> "itemValidator\n1" OrderItemValidator     
-OrderValidator          -[#008200,dashed]-^  Validator              
-Product                "1" *-[#595959,plain]-> "categorie\n1" CategorieBautura       
-Product                "1" *-[#595959,plain]-> "tip\n1" TipBautura             
-ProductService         "1" *-[#595959,plain]-> "productRepo\n1" Repository             
-ProductTest            "1" *-[#595959,plain]-> "product\n1" Product                
-ProductValidator        -[#008200,dashed]-^  Validator              
-Reteta                 "1" *-[#595959,plain]-> "ingrediente\n*" IngredientReteta       
-RetetaService          "1" *-[#595959,plain]-> "retetaRepo\n1" Repository             
-RetetaValidator         -[#008200,dashed]-^  Validator              
-StocService            "1" *-[#595959,plain]-> "stocRepo\n1" Repository             
-StocValidator           -[#008200,dashed]-^  Validator              
+' ── Validators ──────────────────────────────────────────────────────────────
+interface Validator<T> << interface >>
+class ValidationException
+
+class ProductValidator
+class OrderValidator
+class OrderItemValidator
+class RetetaValidator
+class StocValidator
+class CategorieValidator
+class TipValidator
+class IngredientValidator
+
+' ── Services ────────────────────────────────────────────────────────────────
+interface StocObserver << interface >>
+class ProductService
+class OrderService
+class RetetaService
+class StocService
+class CategorieService
+class TipService
+class IngredientService
+class DailyReportService
+class DrinkShopService
+
+' ── Export / Receipt ────────────────────────────────────────────────────────
+class CsvExporter
+class ReceiptGenerator
+
+' ── UI ──────────────────────────────────────────────────────────────────────
+class DrinkShopApp
+class DrinkShopController
+
+' ── Test ────────────────────────────────────────────────────────────────────
+class ProductTest
+
+' ── Domain associations ─────────────────────────────────────────────────────
+Product "1" *--> "categorie\n1" CategorieBautura
+Product "1" *--> "tip\n1" TipBautura
+IngredientReteta "1" *--> "ingredient\n1" Ingredient
+Stoc "1" *--> "ingredient\n1" Ingredient
+Reteta "1" *--> "ingrediente\n*" IngredientReteta
+OrderItem "1" *--> "product\n1" Product
+Order "1" *--> "items\n*" OrderItem
+
+' ── Repository hierarchy ────────────────────────────────────────────────────
+AbstractRepository   -[#008200,dashed]-^  Repository
+FileAbstractRepository -[#000082,plain]-^ AbstractRepository
+
+FileCategorieRepository  -[#000082,plain]-^ FileAbstractRepository
+FileTipRepository        -[#000082,plain]-^ FileAbstractRepository
+FileIngredientRepository -[#000082,plain]-^ FileAbstractRepository
+FileProductRepository    -[#000082,plain]-^ FileAbstractRepository
+FileOrderRepository      -[#000082,plain]-^ FileAbstractRepository
+FileRetetaRepository     -[#000082,plain]-^ FileAbstractRepository
+FileStocRepository       -[#000082,plain]-^ FileAbstractRepository
+
+FileProductRepository  "1" *--> "categorieRepo\n1" Repository
+FileProductRepository  "1" *--> "tipRepo\n1" Repository
+FileOrderRepository    "1" *--> "productRepository\n1" Repository
+FileRetetaRepository   "1" *--> "ingredientRepo\n1" Repository
+FileStocRepository     "1" *--> "ingredientRepo\n1" Repository
+
+' ── Validator hierarchy ─────────────────────────────────────────────────────
+ProductValidator    -[#008200,dashed]-^ Validator
+OrderValidator      -[#008200,dashed]-^ Validator
+OrderItemValidator  -[#008200,dashed]-^ Validator
+RetetaValidator     -[#008200,dashed]-^ Validator
+StocValidator       -[#008200,dashed]-^ Validator
+CategorieValidator  -[#008200,dashed]-^ Validator
+TipValidator        -[#008200,dashed]-^ Validator
+IngredientValidator -[#008200,dashed]-^ Validator
+OrderValidator "1" *--> "itemValidator\n1" OrderItemValidator
+
+' ── Service dependencies ────────────────────────────────────────────────────
+ProductService    "1" *--> "productRepo\n1"   Repository
+ProductService    "1" *--> "validator\n1"     ProductValidator
+OrderService      "1" *--> "orderRepo\n1"     Repository
+OrderService      "1" *--> "orderValidator\n1" OrderValidator
+RetetaService     "1" *--> "retetaRepo\n1"    Repository
+RetetaService     "1" *--> "validator\n1"     RetetaValidator
+StocService       "1" *--> "stocRepo\n1"      Repository
+StocService       "1" *--> "validator\n1"     StocValidator
+StocService       "1" o--> "observers\n*"     StocObserver
+CategorieService  "1" *--> "categorieRepo\n1" Repository
+CategorieService  "1" *--> "validator\n1"     CategorieValidator
+TipService        "1" *--> "tipRepo\n1"       Repository
+TipService        "1" *--> "validator\n1"     TipValidator
+IngredientService "1" *--> "ingredientRepo\n1" Repository
+IngredientService "1" *--> "validator\n1"     IngredientValidator
+DailyReportService "1" *--> "repo\n1"         Repository
+
+' ── Facade ──────────────────────────────────────────────────────────────────
+DrinkShopService "1" *--> "productService\n1"   ProductService
+DrinkShopService "1" *--> "orderService\n1"     OrderService
+DrinkShopService "1" *--> "retetaService\n1"    RetetaService
+DrinkShopService "1" *--> "stocService\n1"      StocService
+DrinkShopService "1" *--> "categorieService\n1" CategorieService
+DrinkShopService "1" *--> "tipService\n1"       TipService
+DrinkShopService "1" *--> "ingredientService\n1" IngredientService
+DrinkShopService "1" *--> "report\n1"           DailyReportService
+
+' ── UI wiring ───────────────────────────────────────────────────────────────
+DrinkShopApp          -[#000082,plain]-> DrinkShopController
+DrinkShopController "1" *--> "service\n1" DrinkShopService
+
+' ── Test ────────────────────────────────────────────────────────────────────
+ProductTest "1" *--> "product\n1" Product
+
 @enduml

@@ -1,8 +1,10 @@
 package drinkshop.domain;
 
-import java.io.Serializable;
-
-public class OrderItem implements Serializable {
+/**
+ * One line in an order. Serializable removed – persistence is file-based
+ * (defect A08).
+ */
+public class OrderItem {
 
     private Product product;
     private int quantity;
@@ -12,31 +14,18 @@ public class OrderItem implements Serializable {
         this.quantity = quantity;
     }
 
-    public Product getProduct() {
-        return product;
-    }
+    public Product getProduct() { return product; }
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
+    public void setProduct(Product product) { this.product = product; }
 
-    public int getQuantity() {
-        return quantity;
-    }
+    public int getQuantity() { return quantity; }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
+
+    public double getTotal() { return product.getPret() * quantity; }
 
     @Override
     public String toString() {
-        return "OrderItem{" +
-                "product=" + product +
-                ", quantity=" + quantity +
-                '}';
-    }
-
-    public double getTotal() {
-        return product.getPret() * quantity;
+        return "OrderItem{product=" + product + ", quantity=" + quantity + '}';
     }
 }

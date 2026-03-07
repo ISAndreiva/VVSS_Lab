@@ -1,11 +1,11 @@
-1,cafea_macinata:7.0,apa:30.0
-2,cafea_macinata:7.0,lapte:120.0
-3,cafea_macinata:7.0,lapte:180.0
-4,matcha_pudra:5.0,lapte:150.0,selectedProd:1.0
-5,taro_pudra:20.0,lapte:150.0,tapioca:50.0
-6,apa:200.0,lamaie:30.0,zahar:10.0
-7,ceai_verde:5.0,apa:200.0
-8,cafea_macinata:7.0,lapte_ovaz:180.0
-9,apa:1000.0,lamaie:10.0
-10,apa:200.0,lamaie:20.0
-11,apa:200.0,zahar:100.0,lime:10.0
+1,Espresso,1:7.0,2:30.0
+2,Cappuccino,1:7.0,3:120.0
+3,Latte,1:7.0,3:180.0
+4,Matcha Latte,5:5.0,3:150.0
+5,Taro Bubble Tea,6:20.0,3:150.0,7:50.0
+6,Limonada,2:200.0,9:30.0,10:10.0
+7,Ceai Verde,8:5.0,2:200.0
+8,Oat Milk Latte,1:7.0,4:180.0
+9,Apa plata cu lamaie,2:1000.0,9:10.0
+10,Lime-onade,2:200.0,9:20.0
+11,Lime-onade Special,2:200.0,10:100.0,11:10.0
