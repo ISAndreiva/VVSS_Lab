@@ -6,7 +6,6 @@ public class ProductValidator implements Validator<Product> {
 
     @Override
     public void validate(Product product) {
-
         String errors = "";
 
         if (product.getId() <= 0)
@@ -17,6 +16,12 @@ public class ProductValidator implements Validator<Product> {
 
         if (product.getPret() <= 0)
             errors += "Pret invalid!\n";
+
+        if (product.getCategorie() == null)
+            errors += "Categoria nu poate fi nula!\n";
+
+        if (product.getTip() == null)
+            errors += "Tipul nu poate fi nul!\n";
 
         if (!errors.isEmpty())
             throw new ValidationException(errors);

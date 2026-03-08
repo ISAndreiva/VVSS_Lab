@@ -2,24 +2,36 @@ package drinkshop.service;
 
 import drinkshop.domain.*;
 import drinkshop.repository.Repository;
+import drinkshop.service.validator.ProductValidator;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Calls the validator on every mutation (defect A04).
+ * Uses null instead of a sentinel ALL enum value for "show all" filtering
+ * (defect A03 – CategorieBautura/TipBautura no longer have an ALL constant).
+ */
 public class ProductService {
 
     private final Repository<Integer, Product> productRepo;
+    private final ProductValidator validator;
 
-    public ProductService(Repository<Integer, Product> productRepo) {
+    public ProductService(Repository<Integer, Product> productRepo,
+                          ProductValidator validator) {
         this.productRepo = productRepo;
+        this.validator = validator;
     }
 
     public void addProduct(Product p) {
+        validator.validate(p);
         productRepo.save(p);
     }
 
-    public void updateProduct(int id, String name, double price, CategorieBautura categorie, TipBautura tip) {
+    public void updateProduct(int id, String name, double price,
+                               CategorieBautura categorie, TipBautura tip) {
         Product updated = new Product(id, name, price, categorie, tip);
+        validator.validate(updated);
         productRepo.update(updated);
     }
 
@@ -28,13 +40,6 @@ public class ProductService {
     }
 
     public List<Product> getAllProducts() {
-//        Iterable<Product> it=productRepo.findAll();
-//        ArrayList<Product> products=new ArrayList<>();
-//        it.forEach(products::add);
-//        return products;
-
-//        return StreamSupport.stream(productRepo.findAll().spliterator(), false)
-//                    .collect(Collectors.toList());
         return productRepo.findAll();
     }
 
@@ -42,17 +47,24 @@ public class ProductService {
         return productRepo.findOne(id);
     }
 
+    /** Pass {@code null} to retrieve all products (replaces old ALL sentinel). */
     public List<Product> filterByCategorie(CategorieBautura categorie) {
-        if (categorie == CategorieBautura.ALL) return getAllProducts();
+        if (categorie == null) return getAllProducts();
         return getAllProducts().stream()
-                .filter(p -> p.getCategorie() == categorie)
+                .filter(p -> p.getCategorie().getId() == categorie.getId())
                 .collect(Collectors.toList());
     }
 
+    /** Pass {@code null} to retrieve all products (replaces old ALL sentinel). */
     public List<Product> filterByTip(TipBautura tip) {
-        if (tip == TipBautura.ALL) return getAllProducts();
+        if (tip == null) return getAllProducts();
         return getAllProducts().stream()
-                .filter(p -> p.getTip() == tip)
+                .filter(p -> p.getTip().getId() == tip.getId())
                 .collect(Collectors.toList());
+    }
+
+    public int nextId() {
+        return productRepo.findAll().stream()
+                .mapToInt(Product::getId).max().orElse(0) + 1;
     }
 }

@@ -4,29 +4,33 @@ import drinkshop.domain.IngredientReteta;
 import drinkshop.domain.Reteta;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
+/** Fixed NPE bug on null ingredient list and removed AtomicReference antipattern. */
 public class RetetaValidator implements Validator<Reteta> {
 
     @Override
     public void validate(Reteta reteta) {
-
-        AtomicReference<String> errors = new AtomicReference<>("");
+        String errors = "";
 
         if (reteta.getId() <= 0)
-            errors.accumulateAndGet("Product ID invalid!\n", String::concat);
+            errors += "Product ID invalid!\n";
+
+        if (reteta.getName() == null || reteta.getName().isBlank())
+            errors += "Numele retetei nu poate fi gol!\n";
 
         List<IngredientReteta> ingrediente = reteta.getIngrediente();
-        if (ingrediente == null || ingrediente.isEmpty())
-            errors.accumulateAndGet("Ingrediente empty!\n", String::concat);
+        if (ingrediente == null || ingrediente.isEmpty()) {
+            errors += "Reteta nu are ingrediente!\n";
+        } else {
+            for (IngredientReteta entry : ingrediente) {
+                if (entry.getIngredient() == null)
+                    errors += "Ingredient null in reteta!\n";
+                else if (entry.getCantitate() <= 0)
+                    errors += "[" + entry.getDenumire() + "] cantitate negativa sau zero!\n";
+            }
+        }
 
-        ingrediente.stream()
-                .filter(entry -> entry.getCantitate() <= 0)
-                .forEach(entry -> {
-                    errors.accumulateAndGet("[" + entry.getDenumire() + "]"+ "cantitate negativa sau zero", String::concat);
-                });
-
-        if (!errors.get().isEmpty())
-            throw new ValidationException(errors.get());
+        if (!errors.isEmpty())
+            throw new ValidationException(errors);
     }
 }
