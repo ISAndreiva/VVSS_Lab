@@ -9,6 +9,8 @@ import drinkshop.service.validator.ValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <ul>
@@ -55,14 +57,19 @@ public class StocService {
     }
 
     public boolean areSuficient(Reteta reteta) {
+        List<Stoc> allStoc = stocRepo.findAll();
+
+        Map<Integer, Double> stocDisponibil = allStoc.stream()
+            .collect(Collectors.groupingBy(
+                s -> s.getIngredient().getId(),
+                Collectors.summingDouble(Stoc::getCantitate))
+            );
+
         for (IngredientReteta e : reteta.getIngrediente()) {
             int ingredientId = e.getIngredient().getId();
             double necesar = e.getCantitate();
 
-            double disponibil = stocRepo.findAll().stream()
-                    .filter(s -> s.getIngredient().getId() == ingredientId)
-                    .mapToDouble(Stoc::getCantitate)
-                    .sum();
+            double disponibil = stocDisponibil.getOrDefault(ingredientId, 0.0);
 
             if (disponibil < necesar) return false;
         }
@@ -73,13 +80,18 @@ public class StocService {
         if (!areSuficient(reteta))
             throw new ValidationException("Stoc insuficient pentru reteta.");
 
+        List<Stoc> allStoc = stocRepo.findAll();
+
+        Map<Integer, List<Stoc>> stocGrupat = allStoc.stream()
+            .collect(Collectors.groupingBy(
+                s -> s.getIngredient().getId()
+            ));
+
         for (IngredientReteta e : reteta.getIngrediente()) {
             int ingredientId = e.getIngredient().getId();
             double ramas = e.getCantitate();
 
-            List<Stoc> matching = stocRepo.findAll().stream()
-                    .filter(s -> s.getIngredient().getId() == ingredientId)
-                    .toList();
+            List<Stoc> matching = stocGrupat.getOrDefault(ingredientId, new ArrayList<>());
 
             for (Stoc s : matching) {
                 if (ramas <= 0) break;
@@ -91,7 +103,7 @@ public class StocService {
         }
 
         // Notify observers about any stock items that just dropped below minimum
-        stocRepo.findAll().stream()
+        allStoc.stream()
                 .filter(Stoc::isSubMinim)
                 .forEach(s -> observers.forEach(obs -> obs.onStocSubMinim(s)));
     }

@@ -3,6 +3,7 @@ package drinkshop.repository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.StreamSupport;
 
 public abstract class AbstractRepository<ID, E>
@@ -12,6 +13,7 @@ public abstract class AbstractRepository<ID, E>
 
     @Override
     public E findOne(ID id) {
+        Objects.requireNonNull(id, "ID must not be null");
         return entities.get(id);
     }
 
@@ -24,17 +26,30 @@ public abstract class AbstractRepository<ID, E>
 
     @Override
     public E save(E entity) {
+        Objects.requireNonNull(entity, "Entity must not be null when trying to save it");
+
+        if(entities.containsKey(getId(entity))) {
+            throw new IllegalArgumentException("There already exists in repository a key equal to the one of the entity");
+        }
+
         entities.put(getId(entity), entity);
         return entity;
     }
 
     @Override
     public E delete(ID id) {
+        Objects.requireNonNull(id, "ID must not be null");
         return entities.remove(id);
     }
 
     @Override
     public E update(E entity) {
+        Objects.requireNonNull(entity, "Entity must not be null when trying to update it");
+
+        if(!entities.containsKey(getId(entity))) {
+            throw new IllegalArgumentException("Entity does not exist in repository");
+        }
+
         entities.put(getId(entity), entity);
         return entity;
     }
