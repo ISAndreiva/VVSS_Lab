@@ -83,7 +83,7 @@ public class OrderService {
     /** Single source of truth: delegates to {@link Order#computeTotalPrice()}. */
     public double computeCurrentOrderTotal() {
         currentOrder.computeTotalPrice();
-        return currentOrder.getTotal();
+        return currentOrder.getTotalPrice();
     }
 
     /**
