@@ -3,7 +3,6 @@ package drinkshop.service;
 import drinkshop.domain.Order;
 import drinkshop.repository.Repository;
 
-import java.util.List;
 
 /**
  * Daily revenue reporting service. Moved from the {@code drinkshop.reports}

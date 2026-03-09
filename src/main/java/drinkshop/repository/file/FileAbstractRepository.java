@@ -16,7 +16,7 @@ public abstract class FileAbstractRepository<ID, E>
 
     protected String fileName;
 
-    public FileAbstractRepository(String fileName) {
+    protected FileAbstractRepository(String fileName) {
         this.fileName = fileName;
     }
 
@@ -25,8 +25,11 @@ public abstract class FileAbstractRepository<ID, E>
         if (!file.exists()) {
             try {
                 File parent = file.getParentFile();
-                if (parent != null) parent.mkdirs();
-                file.createNewFile();
+                if (parent != null)
+                    parent.mkdirs();
+                if (!file.createNewFile()) {
+                    throw new RuntimeException("Fisierul exista deja, somehow: " + fileName);
+                }
             } catch (IOException e) {
                 throw new RuntimeException("Nu s-a putut crea fisierul: " + fileName, e);
             }
