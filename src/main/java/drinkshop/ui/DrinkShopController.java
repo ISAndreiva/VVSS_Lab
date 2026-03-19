@@ -204,9 +204,8 @@ public class DrinkShopController {
         TipBautura tip = comboProdTip.getValue();
         if (cat == null || tip == null) { showError("Selectati o categorie si un tip."); return; }
         try {
-            Product p = new Product(r.getId(), txtProdName.getText(),
+            service.addProduct(r.getId(), txtProdName.getText(),
                     Double.parseDouble(txtProdPrice.getText()), cat, tip);
-            service.addProduct(p);
             initData();
         } catch (Exception e) { showError(e.getMessage()); }
     }

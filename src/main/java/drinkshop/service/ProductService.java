@@ -22,7 +22,10 @@ public class ProductService {
         this.validator = validator;
     }
 
-    public void addProduct(Product p) {
+    public void addProduct(int id, String nume, double pret,
+                           CategorieBautura categorie,
+                           TipBautura tip) {
+        var p = new Product(id, nume, pret, categorie, tip);
         validator.validate(p);
         productRepo.save(p);
     }

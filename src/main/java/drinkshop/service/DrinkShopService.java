@@ -55,7 +55,12 @@ public class DrinkShopService {
 
     // ---- Product ----
 
-    public void addProduct(Product p) { productService.addProduct(p); }
+    public void addProduct(int id, String nume, double pret,
+                           CategorieBautura categorie,
+                           TipBautura tip)
+    {
+        productService.addProduct(id, nume, pret, categorie, tip);
+    }
     public void updateProduct(int id, String name, double price,
                                CategorieBautura cat, TipBautura tip) {
         productService.updateProduct(id, name, price, cat, tip);
