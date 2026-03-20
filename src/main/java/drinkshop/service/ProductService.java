@@ -32,6 +32,9 @@ public class ProductService {
 
     public void updateProduct(int id, String name, double price,
                                CategorieBautura categorie, TipBautura tip) {
+        if (productRepo.findOne(id) == null) {
+            throw new IllegalArgumentException("Entity does not exist in repository");
+        }
         Product updated = new Product(id, name, price, categorie, tip);
         validator.validate(updated);
         productRepo.update(updated);
