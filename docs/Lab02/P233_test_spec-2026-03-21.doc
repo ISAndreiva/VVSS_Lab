@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>testspec Proiect233 - gsir3538_BBT</title>
+<link type="text/css" rel="stylesheet" href="https://www.scs.ubbcluj.ro/testlink/gui/themes/default/css/tl_documents.css" />
+<style type="text/css" media="print">.notprintable { display:none;}</style>
+</head>
+<body>
+<div>
+<div style="float:right;">TestLink Community [configure $tlCfg-&gt;document_generator-&gt;company_name]</div>
+<div>&nbsp;</div><hr />
+<p style="text-align: center;"><img alt="TestLink logo" title="configure using $tlCfg->document_generator->company_logo"  width= height= src="https://www.scs.ubbcluj.ro/testlink/gui/themes/default/images/tl-logo-transparent-25.png" /></p></div>
+<div class="doc_title"><p>Test Specification</p></div>
+<div class="doc_title" style="text-align:left;margin: auto;"><p>Test Project: Proiect233<br/>Test Suite: Proiect233 - gsir3538_BBT</p></div>
+<div class="summary"><p id="printedby">Printed by TestLink on 21/03/2026</p></div>
+<div class="pagefooter" id="copyright">2012 &copy; TestLink Community</div>
+<h1 class="general" style="page-break-before: always">Table Of Contents</h1><div class="toc"><p style="padding-left: 20px;"><b><a href="#toc_1">1.gsir3538_BBT</a></b></p>
+<p style="padding-left: 45px;"><a href="#toc_tc28013">P233-10: AdaugareProdusTestcase1-ECP</a></p><p style="padding-left: 45px;"><a href="#toc_tc28015">P233-11: AdaugareProdusTestcase2-ECP</a></p><p style="padding-left: 45px;"><a href="#toc_tc28017">P233-12: AdaugareProdusTestcase3-BVA</a></p><p style="padding-left: 45px;"><a href="#toc_tc28019">P233-13: AdaugareProdusTestcase4-BVA</a></p></div><h1 class="doclevel" >Scope</h1>
+<div class="txtlevel"><p>Proiect de testare pentru studentii din grupa 233.</p></div>
+ <br/><a name='toc_1'></a>
+<h1 class='doclevel'>1.Test Suite : gsir3538_BBT</h1>
+<div><p>Se testează adăugarea unui produs</p>
+</div><a name="toc_tc28013"></a><p>&nbsp;</p><div> <table class="tc" width="90%" ><tr><th colspan="4">Test Case P233-10: AdaugareProdusTestcase1-ECP&nbsp;<span style="font-size: 80%;">[Version  : 1]</span></th></tr>
+<tr><td width="20%" valign="top"><span class="label">Author:</span></td><td colspan="3">gsir3538</td></tr>
+<tr><td colspan="4"><span class="label">Summary:</span><br /><p>Se adauga un produs nou folosind variabile valide. Cu ajutorul variabilelor, un produs nou este salvat in sistem.</p>
+</td></tr><tr><td colspan="4"><span class="label">Preconditions:</span><br /><ol>
+	<li>id: int &amp; id &gt;= 0</li>
+	<li>pret: double &amp; pret &gt; 0 &amp; pret &lt;= 10000</li>
+	<li>nume: string &amp; len(nume) &gt; 0 &amp;&nbsp;len(nume) &lt;= 255</li>
+	<li>tip: TipBautura &amp; exista in sistem</li>
+	<li>categorie: CategorieBautura &amp; exista in sistem</li>
+</ol>
+</td></tr><tr><td width="20%" valign="top"><span class="label">Execution type:</span></td><td colspan="3">Automated</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Estimated exec. duration (min):</span></td><td colspan="3"></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Importance:</span></td><td colspan="3">Medium</td></tr>
+<tr><td colspan="4"></td></tr><tr><td > name of the autotest class:</td><td  colspan = "3" >drinkshop.service.ProductServiceEcpBvaTest</td></tr>
+<tr><td > name of the test method:</td><td  colspan = "3" >drinkshop.service.ProductServiceEcpBvaTest#assertAddCase</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Requirements</span><td colspan="3">gsir3538_F01:  AdăugareProdus [Version : 1]<br /></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Keywords:</span></td><td colspan="3">&nbsp;None<br/></td></tr>
+</table>
+</div>
+<a name="toc_tc28015"></a><p>&nbsp;</p><div> <table class="tc" width="90%" ><tr><th colspan="4">Test Case P233-11: AdaugareProdusTestcase2-ECP&nbsp;<span style="font-size: 80%;">[Version  : 1]</span></th></tr>
+<tr><td width="20%" valign="top"><span class="label">Author:</span></td><td colspan="3">gsir3538</td></tr>
+<tr><td colspan="4"><span class="label">Summary:</span><br /><p>Se incearca adaugarea unui produs. id-ul pasat este negativ. Se asteapta ca o eroare sa fie aruncata.</p>
+</td></tr><tr><td colspan="4"><span class="label">Preconditions:</span><br /><ol>
+	<li>id: int &amp; id &lt; 0</li>
+	<li>pret: double &amp; pret &gt; 0 &amp; pret &lt;= 10000</li>
+	<li>nume: string &amp;&nbsp;len(nume) &gt; 0 &amp; len(nume) &lt;= 255</li>
+	<li>tip: TipBautura &amp; sa existe in sistem</li>
+	<li>categorie: CategorieBautura &amp; sa existe in sistem</li>
+</ol>
+</td></tr><tr><td width="20%" valign="top"><span class="label">Execution type:</span></td><td colspan="3">Automated</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Estimated exec. duration (min):</span></td><td colspan="3"></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Importance:</span></td><td colspan="3">Medium</td></tr>
+<tr><td colspan="4"></td></tr><tr><td > name of the autotest class:</td><td  colspan = "3" >drinkshop.service.ProductServiceEcpBvaTest</td></tr>
+<tr><td > name of the test method:</td><td  colspan = "3" >drinkshop.service.ProductServiceEcpBvaTest#assertAddCase</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Requirements</span><td colspan="3">gsir3538_F01:  AdăugareProdus [Version : 1]<br /></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Keywords:</span></td><td colspan="3">&nbsp;None<br/></td></tr>
+</table>
+</div>
+<a name="toc_tc28017"></a><p>&nbsp;</p><div> <table class="tc" width="90%" ><tr><th colspan="4">Test Case P233-12: AdaugareProdusTestcase3-BVA&nbsp;<span style="font-size: 80%;">[Version  : 1]</span></th></tr>
+<tr><td width="20%" valign="top"><span class="label">Author:</span></td><td colspan="3">gsir3538</td></tr>
+<tr><td colspan="4"><span class="label">Summary:</span><br /><p>Se incearca adaugarea unui produs nou. id-ul va fi egal cu 0. Toate celelalte variabile vor fi valide. Noul produs va fi salvat.</p>
+</td></tr><tr><td colspan="4"><span class="label">Preconditions:</span><br /><ol>
+	<li>id = 0</li>
+	<li>pret: double &amp; pret &gt; 0 &amp; pret &lt;= 10000</li>
+	<li>nume: string &amp;&nbsp;len(nume) &gt; 0 &amp; len(nume) &lt;= 255</li>
+	<li>tip: TipBautura &amp; sa existe in sistem</li>
+	<li>categorie: CategorieBautura &amp; sa existe in sistem&nbsp;</li>
+</ol>
+</td></tr><tr><td width="20%" valign="top"><span class="label">Execution type:</span></td><td colspan="3">Automated</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Estimated exec. duration (min):</span></td><td colspan="3"></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Importance:</span></td><td colspan="3">Medium</td></tr>
+<tr><td colspan="4"></td></tr><tr><td > name of the autotest class:</td><td  colspan = "3" >drinkshop.service.ProductServiceEcpBvaTest</td></tr>
+<tr><td > name of the test method:</td><td  colspan = "3" >drinkshop.service.ProductServiceEcpBvaTest#assertAddCase</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Requirements</span><td colspan="3">gsir3538_F01:  AdăugareProdus [Version : 1]<br /></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Keywords:</span></td><td colspan="3">&nbsp;None<br/></td></tr>
+</table>
+</div>
+<a name="toc_tc28019"></a><p>&nbsp;</p><div> <table class="tc" width="90%" ><tr><th colspan="4">Test Case P233-13: AdaugareProdusTestcase4-BVA&nbsp;<span style="font-size: 80%;">[Version  : 1]</span></th></tr>
+<tr><td width="20%" valign="top"><span class="label">Author:</span></td><td colspan="3">gsir3538</td></tr>
+<tr><td colspan="4"><span class="label">Summary:</span><br /><p>Se incearca adaugarea unui nou produs. Pretul va fi 0 - 0.00001. Se asteapta ca o eroare sa fie aruncata.</p>
+</td></tr><tr><td colspan="4"><span class="label">Preconditions:</span><br /><ol>
+	<li>id: int &amp; id &gt;= 0</li>
+	<li>pret&nbsp; =&nbsp;0 - 0.00001</li>
+	<li>nume: string &amp; len(nume) &gt; 0 &amp; len(nume) &lt;= 255</li>
+	<li>tip: TipBautura &amp; sa existe in sistem</li>
+	<li>categorie: CategorieBautura &amp; sa existe in sistem</li>
+</ol>
+</td></tr><tr><td width="20%" valign="top"><span class="label">Execution type:</span></td><td colspan="3">Automated</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Estimated exec. duration (min):</span></td><td colspan="3"></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Importance:</span></td><td colspan="3">Medium</td></tr>
+<tr><td colspan="4"></td></tr><tr><td > name of the autotest class:</td><td  colspan = "3" >drinkshop.service.ProductServiceEcpBvaTest</td></tr>
+<tr><td > name of the test method:</td><td  colspan = "3" >drinkshop.service.ProductServiceEcpBvaTest#assertAddCase</td></tr>
+<tr><td width="20%" valign="top"><span class="label">Requirements</span><td colspan="3">gsir3538_F01:  AdăugareProdus [Version : 1]<br /></td></tr>
+<tr><td width="20%" valign="top"><span class="label">Keywords:</span></td><td colspan="3">&nbsp;None<br/></td></tr>
+</table>
+</div>
+
+</body>
+</html>
