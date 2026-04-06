@@ -63,8 +63,7 @@ class ProductServiceEcpBvaTest {
                     Arguments.of("TC3_BVA", -1, "Nume Valid", 10.0, false, "ID invalid!\n"),
                     Arguments.of("TC4_BVA", Integer.MAX_VALUE, "Nume Valid", 10.0, true, ""),
                     Arguments.of("TC5_BVA", Integer.MAX_VALUE - 1, "Nume Valid", 10.0, true, ""),
-                        Arguments.of("TC6_BVA", (int) ((long) Integer.MAX_VALUE + 1L), "Nume Valid", 10.0, false,
-                            "ID invalid!\n"),
+                    Arguments.of("TC6_BVA", (int) ((long) Integer.MAX_VALUE + 1L), "Nume Valid", 10.0, false, "ID invalid!\n"),
                     Arguments.of("TC7_BVA", 1, "Nume Valid", 0.0, false, "Pret invalid!\n"),
                     Arguments.of("TC8_BVA", 1, "Nume Valid", 0.0 - 0.000001, false, "Pret invalid!\n"),
                     Arguments.of("TC9_BVA", 1, "Nume Valid", 0.0 + 0.000001, true, ""),
@@ -136,27 +135,21 @@ class ProductServiceEcpBvaTest {
         static Stream<Arguments> ecpCases() {
             return Stream.of(
                     Arguments.of("TC1_ECP", 1, "Nume Valid", 15.0, true, null, ""),
-                    Arguments.of("TC2_ECP", 100, "Nume Valid", 15.0, false, IllegalArgumentException.class,
-                            "Entity does not exist in repository"),
-                    Arguments.of("TC3_ECP", 1, "", 15.0, false, ValidationException.class,
-                            "Numele nu poate fi gol!\n"),
-                    Arguments.of("TC4_ECP", 100, "", 15.0, false, IllegalArgumentException.class,
-                            "Entity does not exist in repository")
+                    Arguments.of("TC2_ECP", 100, "Nume Valid", 15.0, false, IllegalArgumentException.class,"Entity does not exist in repository"),
+                    Arguments.of("TC3_ECP", 1, "", 15.0, false, ValidationException.class,"Numele nu poate fi gol!\n"),
+                    Arguments.of("TC4_ECP", 100, "", 15.0, false, IllegalArgumentException.class,"Entity does not exist in repository")
             );
         }
 
         static Stream<Arguments> bvaCases() {
             return Stream.of(
                     Arguments.of("TC1_BVA", 1, "Nume Valid", 10.0, true, null, ""),
-                    Arguments.of("TC2_BVA", 100, "Nume Valid", 10.0, false, IllegalArgumentException.class,
-                            "Entity does not exist in repository"),
+                    Arguments.of("TC2_BVA", 100, "Nume Valid", 10.0, false, IllegalArgumentException.class,"Entity does not exist in repository"),
                     Arguments.of("TC3_BVA", 1, "N", 10.0, true, null, ""),
-                    Arguments.of("TC4_BVA", 1, "?", 10.0, false, ValidationException.class,
-                            "Numele nu poate fi gol!\n"),
+                    Arguments.of("TC4_BVA", 1, "?", 10.0, false, ValidationException.class,"Numele nu poate fi gol!\n"),
                     Arguments.of("TC5_BVA", 1, "N".repeat(99), 10.0, true, null, ""),
                     Arguments.of("TC6_BVA", 1, "N".repeat(98), 10.0, true, null, ""),
-                    Arguments.of("TC7_BVA", 1, "", 10.0, false, ValidationException.class,
-                            "Numele nu poate fi gol!\n")
+                    Arguments.of("TC7_BVA", 1, "", 10.0, false, ValidationException.class,"Numele nu poate fi gol!\n")
             );
         }
 
