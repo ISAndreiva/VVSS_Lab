@@ -71,7 +71,7 @@ class ProductServiceEcpBvaTest {
             );
         }
 
-        @ParameterizedTest(name = "{0}")
+        @ParameterizedTest(name = "addProductEcp")
         @MethodSource("ecpCases")
         @DisplayName("ECP cases for addProduct")
         void addProductEcp(String tc,
@@ -83,7 +83,7 @@ class ProductServiceEcpBvaTest {
             assertAddCase(id, nume, pret, shouldSucceed, expectedError);
         }
 
-        @ParameterizedTest(name = "{0}")
+        @ParameterizedTest(name = "addProductBva")
         @MethodSource("bvaCases")
         @DisplayName("BVA cases for addProduct")
         void addProductBva(String tc,
@@ -152,7 +152,7 @@ class ProductServiceEcpBvaTest {
             );
         }
 
-        @ParameterizedTest(name = "{0}")
+        @ParameterizedTest(name = "updateProductEcp")
         @MethodSource("ecpCases")
         @DisplayName("ECP cases for updateProduct")
         void updateProductEcp(String tc,
@@ -165,7 +165,7 @@ class ProductServiceEcpBvaTest {
             assertUpdateCase(id, nume, pret, shouldSucceed, expectedException, expectedMessage);
         }
 
-        @ParameterizedTest(name = "{0}")
+        @ParameterizedTest(name = "updateProductBva")
         @MethodSource("bvaCases")
         @DisplayName("BVA cases for updateProduct")
         void updateProductBva(String tc,
