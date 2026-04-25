@@ -5,6 +5,7 @@ import drinkshop.repository.Repository;
 import drinkshop.service.validator.Validator;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Calls the validator on every mutation (defect A04).
@@ -57,7 +58,7 @@ public class ProductService {
         if (categorie == null) return getAllProducts();
         return getAllProducts().stream()
                 .filter(p -> p.getCategorie().getId() == categorie.getId())
-                .toList();
+                .collect(Collectors.toList());
     }
 
     /** Pass {@code null} to retrieve all products (replaces old ALL sentinel). */
@@ -65,7 +66,7 @@ public class ProductService {
         if (tip == null) return getAllProducts();
         return getAllProducts().stream()
                 .filter(p -> p.getTip().getId() == tip.getId())
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public int nextId() {

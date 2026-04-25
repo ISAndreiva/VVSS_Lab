@@ -53,7 +53,7 @@ public class FileOrderRepository
     protected String createEntityAsString(Order entity) {
         StringBuilder sb = new StringBuilder();
         for (OrderItem item : entity.getItems()) {
-            if (!sb.isEmpty())
+            if (sb.length() > 0)
                 sb.append("|");
             sb.append(item.getProduct().getId()).append(":").append(item.getQuantity());
         }
