@@ -7,18 +7,14 @@ import drinkshop.repository.AbstractRepository;
 import drinkshop.repository.Repository;
 import drinkshop.service.validator.ProductValidator;
 import drinkshop.service.validator.ValidationException;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DisplayName("ECP + BVA for ProductService (F01/F02)")
 @Tag("bbt")
 class ProductServiceEcpBvaTest {
 
@@ -29,182 +25,328 @@ class ProductServiceEcpBvaTest {
     private ProductService service;
     private Repository<Integer, Product> repo;
 
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @Nested
-    @DisplayName("F01 - addProduct")
-    class AddProductTests {
-
-        @BeforeEach
-        void setUpAddSuite() {
-            repo = new InMemoryProductRepository();
-            service = new ProductService(repo, new ProductValidator());
-        }
-
-        Stream<Arguments> ecpCases() {
-            return Stream.of(
-                    Arguments.of("TC1_ECP", 0, "Nume Valid", 10.0, true, ""),
-                    Arguments.of("TC2_ECP", 10, "Nume Valid", 15.0, true, ""),
-                    Arguments.of("TC3_ECP", -5, "Nume Valid", 15.0, false, "ID invalid!\n"),
-                    Arguments.of("TC4_ECP", 0, "Nume Valid", 0.0, false, "Pret invalid!\n"),
-                    Arguments.of("TC5_ECP", 0, "Nume Valid", -10.0, false, "Pret invalid!\n"),
-                    Arguments.of("TC6_ECP", 0, "Nume Valid", 100000.0, false, "Pret invalid!\n"),
-                    Arguments.of("TC7_ECP", -5, "Nume Valid", 0.0, false, "ID invalid!\nPret invalid!\n"),
-                    Arguments.of("TC8_ECP", -5, "Nume Valid", -10.0, false, "ID invalid!\nPret invalid!\n"),
-                    Arguments.of("TC9_ECP", -5, "Nume Valid", 100000.0, false, "ID invalid!\nPret invalid!\n")
-            );
-        }
-
-        Stream<Arguments> bvaCases() {
-            return Stream.of(
-                    Arguments.of("TC1_BVA", 0, "Nume Valid", 10.0, true, ""),
-                    Arguments.of("TC2_BVA", 1, "Nume Valid", 10.0, true, ""),
-                    Arguments.of("TC3_BVA", -1, "Nume Valid", 10.0, false, "ID invalid!\n"),
-                    Arguments.of("TC4_BVA", Integer.MAX_VALUE, "Nume Valid", 10.0, true, ""),
-                    Arguments.of("TC5_BVA", Integer.MAX_VALUE - 1, "Nume Valid", 10.0, true, ""),
-                    Arguments.of("TC6_BVA", (int) ((long) Integer.MAX_VALUE + 1L), "Nume Valid", 10.0, false, "ID invalid!\n"),
-                    Arguments.of("TC7_BVA", 1, "Nume Valid", 0.0, false, "Pret invalid!\n"),
-                    Arguments.of("TC8_BVA", 1, "Nume Valid", 0.0 - 0.000001, false, "Pret invalid!\n"),
-                    Arguments.of("TC9_BVA", 1, "Nume Valid", 0.0 + 0.000001, true, ""),
-                    Arguments.of("TC10_BVA", 1, "Nume Valid", 10000.0, true, ""),
-                    Arguments.of("TC11_BVA", 1, "Nume Valid", 10000.0 - 0.000001, true, ""),
-                    Arguments.of("TC12_BVA", 1, "Nume Valid", 10000.0 + 0.000001, false, "Pret invalid!\n")
-            );
-        }
-
-        @ParameterizedTest(name = "addProductEcp")
-        @MethodSource("ecpCases")
-        @DisplayName("ECP cases for addProduct")
-        void addProductEcp(String tc,
-                           int id,
-                           String nume,
-                           double pret,
-                           boolean shouldSucceed,
-                           String expectedError) {
-            assertAddCase(id, nume, pret, shouldSucceed, expectedError);
-        }
-
-        @ParameterizedTest(name = "addProductBva")
-        @MethodSource("bvaCases")
-        @DisplayName("BVA cases for addProduct")
-        void addProductBva(String tc,
-                           int id,
-                           String nume,
-                           double pret,
-                           boolean shouldSucceed,
-                           String expectedError) {
-            assertAddCase(id, nume, pret, shouldSucceed, expectedError);
-        }
-
-        private void assertAddCase(int id,
-                                   String nume,
-                                   double pret,
-                                   boolean shouldSucceed,
-                                   String expectedError) {
-            // Arrange
-            int initialSize = repo.findAll().size();
-
-            // Act + Assert
-            if (shouldSucceed) {
-                service.addProduct(id, nume, pret, VALID_CATEGORY, VALID_TYPE);
-                assertEquals(initialSize + 1, repo.findAll().size());
-                assertNotNull(repo.findOne(id));
-            } else {
-                ValidationException ex = assertThrows(
-                        ValidationException.class,
-                        () -> service.addProduct(id, nume, pret, VALID_CATEGORY, VALID_TYPE)
-                );
-                assertEquals(expectedError, ex.getMessage());
-                assertEquals(initialSize, repo.findAll().size());
-            }
-        }
+    @BeforeEach
+    void setUp() {
+        repo = new InMemoryProductRepository();
+        service = new ProductService(repo, new ProductValidator());
     }
 
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @Nested
-    @DisplayName("F02 - updateProduct")
-    class UpdateProductTests {
+    // -------------------------------------------------------------------------
+    // F01 - addProduct - ECP
+    // -------------------------------------------------------------------------
 
-        @BeforeEach
-        void setUpUpdateSuite() {
-            repo = new InMemoryProductRepository();
-            service = new ProductService(repo, new ProductValidator());
-            repo.save(new Product(EXISTING_ID, "Initial", 10.0, VALID_CATEGORY, VALID_TYPE));
-        }
-
-        Stream<Arguments> ecpCases() {
-            return Stream.of(
-                    Arguments.of("TC1_ECP", 1, "Nume Valid", 15.0, true, null, ""),
-                    Arguments.of("TC2_ECP", 100, "Nume Valid", 15.0, false, IllegalArgumentException.class,"Entity does not exist in repository"),
-                    Arguments.of("TC3_ECP", 1, "", 15.0, false, ValidationException.class,"Numele nu poate fi gol!\n"),
-                    Arguments.of("TC4_ECP", 100, "", 15.0, false, IllegalArgumentException.class,"Entity does not exist in repository")
-            );
-        }
-
-        Stream<Arguments> bvaCases() {
-            return Stream.of(
-                    Arguments.of("TC1_BVA", 1, "Nume Valid", 10.0, true, null, ""),
-                    Arguments.of("TC2_BVA", 100, "Nume Valid", 10.0, false, IllegalArgumentException.class,"Entity does not exist in repository"),
-                    Arguments.of("TC3_BVA", 1, "N", 10.0, true, null, ""),
-                    Arguments.of("TC4_BVA", 1, "?", 10.0, false, ValidationException.class,"Numele nu poate fi gol!\n"),
-                    Arguments.of("TC5_BVA", 1, "N".repeat(99), 10.0, true, null, ""),
-                    Arguments.of("TC6_BVA", 1, "N".repeat(98), 10.0, true, null, ""),
-                    Arguments.of("TC7_BVA", 1, "", 10.0, false, ValidationException.class,"Numele nu poate fi gol!\n")
-            );
-        }
-
-        @ParameterizedTest(name = "updateProductEcp")
-        @MethodSource("ecpCases")
-        @DisplayName("ECP cases for updateProduct")
-        void updateProductEcp(String tc,
-                              int id,
-                              String nume,
-                              double pret,
-                              boolean shouldSucceed,
-                              Class<? extends Throwable> expectedException,
-                              String expectedMessage) {
-            assertUpdateCase(id, nume, pret, shouldSucceed, expectedException, expectedMessage);
-        }
-
-        @ParameterizedTest(name = "updateProductBva")
-        @MethodSource("bvaCases")
-        @DisplayName("BVA cases for updateProduct")
-        void updateProductBva(String tc,
-                              int id,
-                              String nume,
-                              double pret,
-                              boolean shouldSucceed,
-                              Class<? extends Throwable> expectedException,
-                              String expectedMessage) {
-            assertUpdateCase(id, nume, pret, shouldSucceed, expectedException, expectedMessage);
-        }
-
-        private void assertUpdateCase(int id,
-                                      String nume,
-                                      double pret,
-                                      boolean shouldSucceed,
-                                      Class<? extends Throwable> expectedException,
-                                      String expectedMessage) {
-            // Arrange
-            Product previous = repo.findOne(EXISTING_ID);
-
-            // Act + Assert
-            if (shouldSucceed) {
-                service.updateProduct(id, nume, pret, VALID_CATEGORY, VALID_TYPE);
-                Product updated = repo.findOne(id);
-                assertNotNull(updated);
-                assertEquals(nume, updated.getNume());
-                assertEquals(pret, updated.getPret());
-            } else {
-                Throwable ex = assertThrows(
-                        expectedException,
-                        () -> service.updateProduct(id, nume, pret, VALID_CATEGORY, VALID_TYPE)
-                );
-                assertEquals(expectedMessage, ex.getMessage());
-                assertEquals(previous.getNume(), repo.findOne(EXISTING_ID).getNume());
-                assertEquals(previous.getPret(), repo.findOne(EXISTING_ID).getPret());
-            }
-        }
+    @Test
+    void addProductEcp_TC1() {
+        int initialSize = repo.findAll().size();
+        service.addProduct(0, "Nume Valid", 10.0, VALID_CATEGORY, VALID_TYPE);
+        assertEquals(initialSize + 1, repo.findAll().size());
+        assertNotNull(repo.findOne(0));
     }
+
+    @Test
+    void addProductEcp_TC2() {
+        int initialSize = repo.findAll().size();
+        service.addProduct(10, "Nume Valid", 15.0, VALID_CATEGORY, VALID_TYPE);
+        assertEquals(initialSize + 1, repo.findAll().size());
+        assertNotNull(repo.findOne(10));
+    }
+
+    @Test
+    void addProductEcp_TC3() {
+        int initialSize = repo.findAll().size();
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.addProduct(-5, "Nume Valid", 15.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("ID invalid!\n", ex.getMessage());
+        assertEquals(initialSize, repo.findAll().size());
+    }
+
+    @Test
+    void addProductEcp_TC4() {
+        int initialSize = repo.findAll().size();
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.addProduct(0, "Nume Valid", 0.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("Pret invalid!\n", ex.getMessage());
+        assertEquals(initialSize, repo.findAll().size());
+    }
+
+    @Test
+    void addProductEcp_TC5() {
+        int initialSize = repo.findAll().size();
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.addProduct(0, "Nume Valid", -10.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("Pret invalid!\n", ex.getMessage());
+        assertEquals(initialSize, repo.findAll().size());
+    }
+
+    @Test
+    void addProductEcp_TC6() {
+        int initialSize = repo.findAll().size();
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.addProduct(0, "Nume Valid", 100000.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("Pret invalid!\n", ex.getMessage());
+        assertEquals(initialSize, repo.findAll().size());
+    }
+
+    @Test
+    void addProductEcp_TC7() {
+        int initialSize = repo.findAll().size();
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.addProduct(-5, "Nume Valid", 0.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("ID invalid!\nPret invalid!\n", ex.getMessage());
+        assertEquals(initialSize, repo.findAll().size());
+    }
+
+    @Test
+    void addProductEcp_TC8() {
+        int initialSize = repo.findAll().size();
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.addProduct(-5, "Nume Valid", -10.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("ID invalid!\nPret invalid!\n", ex.getMessage());
+        assertEquals(initialSize, repo.findAll().size());
+    }
+
+    @Test
+    void addProductEcp_TC9() {
+        int initialSize = repo.findAll().size();
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.addProduct(-5, "Nume Valid", 100000.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("ID invalid!\nPret invalid!\n", ex.getMessage());
+        assertEquals(initialSize, repo.findAll().size());
+    }
+
+    // -------------------------------------------------------------------------
+    // F01 - addProduct - BVA
+    // -------------------------------------------------------------------------
+
+    @Test
+    void addProductBva_TC1() {
+        int initialSize = repo.findAll().size();
+        service.addProduct(0, "Nume Valid", 10.0, VALID_CATEGORY, VALID_TYPE);
+        assertEquals(initialSize + 1, repo.findAll().size());
+        assertNotNull(repo.findOne(0));
+    }
+
+    @Test
+    void addProductBva_TC2() {
+        int initialSize = repo.findAll().size();
+        service.addProduct(1, "Nume Valid", 10.0, VALID_CATEGORY, VALID_TYPE);
+        assertEquals(initialSize + 1, repo.findAll().size());
+        assertNotNull(repo.findOne(1));
+    }
+
+    @Test
+    void addProductBva_TC3() {
+        int initialSize = repo.findAll().size();
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.addProduct(-1, "Nume Valid", 10.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("ID invalid!\n", ex.getMessage());
+        assertEquals(initialSize, repo.findAll().size());
+    }
+
+    @Test
+    void addProductBva_TC4() {
+        int initialSize = repo.findAll().size();
+        service.addProduct(Integer.MAX_VALUE, "Nume Valid", 10.0, VALID_CATEGORY, VALID_TYPE);
+        assertEquals(initialSize + 1, repo.findAll().size());
+        assertNotNull(repo.findOne(Integer.MAX_VALUE));
+    }
+
+    @Test
+    void addProductBva_TC5() {
+        int initialSize = repo.findAll().size();
+        service.addProduct(Integer.MAX_VALUE - 1, "Nume Valid", 10.0, VALID_CATEGORY, VALID_TYPE);
+        assertEquals(initialSize + 1, repo.findAll().size());
+        assertNotNull(repo.findOne(Integer.MAX_VALUE - 1));
+    }
+
+    @Test
+    void addProductBva_TC6() {
+        int initialSize = repo.findAll().size();
+        int overflowId = (int) ((long) Integer.MAX_VALUE + 1L);
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.addProduct(overflowId, "Nume Valid", 10.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("ID invalid!\n", ex.getMessage());
+        assertEquals(initialSize, repo.findAll().size());
+    }
+
+    @Test
+    void addProductBva_TC7() {
+        int initialSize = repo.findAll().size();
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.addProduct(1, "Nume Valid", 0.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("Pret invalid!\n", ex.getMessage());
+        assertEquals(initialSize, repo.findAll().size());
+    }
+
+    @Test
+    void addProductBva_TC8() {
+        int initialSize = repo.findAll().size();
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.addProduct(1, "Nume Valid", 0.0 - 0.000001, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("Pret invalid!\n", ex.getMessage());
+        assertEquals(initialSize, repo.findAll().size());
+    }
+
+    @Test
+    void addProductBva_TC9() {
+        int initialSize = repo.findAll().size();
+        service.addProduct(1, "Nume Valid", 0.0 + 0.000001, VALID_CATEGORY, VALID_TYPE);
+        assertEquals(initialSize + 1, repo.findAll().size());
+        assertNotNull(repo.findOne(1));
+    }
+
+    @Test
+    void addProductBva_TC10() {
+        int initialSize = repo.findAll().size();
+        service.addProduct(1, "Nume Valid", 10000.0, VALID_CATEGORY, VALID_TYPE);
+        assertEquals(initialSize + 1, repo.findAll().size());
+        assertNotNull(repo.findOne(1));
+    }
+
+    @Test
+    void addProductBva_TC11() {
+        int initialSize = repo.findAll().size();
+        service.addProduct(1, "Nume Valid", 10000.0 - 0.000001, VALID_CATEGORY, VALID_TYPE);
+        assertEquals(initialSize + 1, repo.findAll().size());
+        assertNotNull(repo.findOne(1));
+    }
+
+    @Test
+    void addProductBva_TC12() {
+        int initialSize = repo.findAll().size();
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.addProduct(1, "Nume Valid", 10000.0 + 0.000001, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("Pret invalid!\n", ex.getMessage());
+        assertEquals(initialSize, repo.findAll().size());
+    }
+
+    // -------------------------------------------------------------------------
+    // F02 - updateProduct - ECP
+    // -------------------------------------------------------------------------
+
+    @Test
+    void updateProductEcp_TC1() {
+        repo.save(new Product(EXISTING_ID, "Initial", 10.0, VALID_CATEGORY, VALID_TYPE));
+        service.updateProduct(1, "Nume Valid", 15.0, VALID_CATEGORY, VALID_TYPE);
+        Product updated = repo.findOne(1);
+        assertNotNull(updated);
+        assertEquals("Nume Valid", updated.getNume());
+        assertEquals(15.0, updated.getPret());
+    }
+
+    @Test
+    void updateProductEcp_TC2() {
+        repo.save(new Product(EXISTING_ID, "Initial", 10.0, VALID_CATEGORY, VALID_TYPE));
+        Product previous = repo.findOne(EXISTING_ID);
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.updateProduct(100, "Nume Valid", 15.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("Entity does not exist in repository", ex.getMessage());
+        assertEquals(previous.getNume(), repo.findOne(EXISTING_ID).getNume());
+        assertEquals(previous.getPret(), repo.findOne(EXISTING_ID).getPret());
+    }
+
+    @Test
+    void updateProductEcp_TC3() {
+        repo.save(new Product(EXISTING_ID, "Initial", 10.0, VALID_CATEGORY, VALID_TYPE));
+        Product previous = repo.findOne(EXISTING_ID);
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.updateProduct(1, "", 15.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("Numele nu poate fi gol!\n", ex.getMessage());
+        assertEquals(previous.getNume(), repo.findOne(EXISTING_ID).getNume());
+        assertEquals(previous.getPret(), repo.findOne(EXISTING_ID).getPret());
+    }
+
+    @Test
+    void updateProductEcp_TC4() {
+        repo.save(new Product(EXISTING_ID, "Initial", 10.0, VALID_CATEGORY, VALID_TYPE));
+        Product previous = repo.findOne(EXISTING_ID);
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.updateProduct(100, "", 15.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("Entity does not exist in repository", ex.getMessage());
+        assertEquals(previous.getNume(), repo.findOne(EXISTING_ID).getNume());
+        assertEquals(previous.getPret(), repo.findOne(EXISTING_ID).getPret());
+    }
+
+    // -------------------------------------------------------------------------
+    // F02 - updateProduct - BVA
+    // -------------------------------------------------------------------------
+
+    @Test
+    void updateProductBva_TC1() {
+        repo.save(new Product(EXISTING_ID, "Initial", 10.0, VALID_CATEGORY, VALID_TYPE));
+        service.updateProduct(1, "Nume Valid", 10.0, VALID_CATEGORY, VALID_TYPE);
+        Product updated = repo.findOne(1);
+        assertNotNull(updated);
+        assertEquals("Nume Valid", updated.getNume());
+        assertEquals(10.0, updated.getPret());
+    }
+
+    @Test
+    void updateProductBva_TC2() {
+        repo.save(new Product(EXISTING_ID, "Initial", 10.0, VALID_CATEGORY, VALID_TYPE));
+        Product previous = repo.findOne(EXISTING_ID);
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.updateProduct(100, "Nume Valid", 10.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("Entity does not exist in repository", ex.getMessage());
+        assertEquals(previous.getNume(), repo.findOne(EXISTING_ID).getNume());
+        assertEquals(previous.getPret(), repo.findOne(EXISTING_ID).getPret());
+    }
+
+    @Test
+    void updateProductBva_TC3() {
+        repo.save(new Product(EXISTING_ID, "Initial", 10.0, VALID_CATEGORY, VALID_TYPE));
+        service.updateProduct(1, "N", 10.0, VALID_CATEGORY, VALID_TYPE);
+        Product updated = repo.findOne(1);
+        assertNotNull(updated);
+        assertEquals("N", updated.getNume());
+        assertEquals(10.0, updated.getPret());
+    }
+
+    @Test
+    void updateProductBva_TC4() {
+        repo.save(new Product(EXISTING_ID, "Initial", 10.0, VALID_CATEGORY, VALID_TYPE));
+        Product previous = repo.findOne(EXISTING_ID);
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.updateProduct(1, "?", 10.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("Numele nu poate fi gol!\n", ex.getMessage());
+        assertEquals(previous.getNume(), repo.findOne(EXISTING_ID).getNume());
+        assertEquals(previous.getPret(), repo.findOne(EXISTING_ID).getPret());
+    }
+
+    @Test
+    void updateProductBva_TC5() {
+        repo.save(new Product(EXISTING_ID, "Initial", 10.0, VALID_CATEGORY, VALID_TYPE));
+        String longName = "N".repeat(99);
+        service.updateProduct(1, longName, 10.0, VALID_CATEGORY, VALID_TYPE);
+        Product updated = repo.findOne(1);
+        assertNotNull(updated);
+        assertEquals(longName, updated.getNume());
+        assertEquals(10.0, updated.getPret());
+    }
+
+    @Test
+    void updateProductBva_TC6() {
+        repo.save(new Product(EXISTING_ID, "Initial", 10.0, VALID_CATEGORY, VALID_TYPE));
+        String longName = "N".repeat(98);
+        service.updateProduct(1, longName, 10.0, VALID_CATEGORY, VALID_TYPE);
+        Product updated = repo.findOne(1);
+        assertNotNull(updated);
+        assertEquals(longName, updated.getNume());
+        assertEquals(10.0, updated.getPret());
+    }
+
+    @Test
+    void updateProductBva_TC7() {
+        repo.save(new Product(EXISTING_ID, "Initial", 10.0, VALID_CATEGORY, VALID_TYPE));
+        Product previous = repo.findOne(EXISTING_ID);
+        ValidationException ex = assertThrows(ValidationException.class,
+                () -> service.updateProduct(1, "", 10.0, VALID_CATEGORY, VALID_TYPE));
+        assertEquals("Numele nu poate fi gol!\n", ex.getMessage());
+        assertEquals(previous.getNume(), repo.findOne(EXISTING_ID).getNume());
+        assertEquals(previous.getPret(), repo.findOne(EXISTING_ID).getPret());
+    }
+
+    // -------------------------------------------------------------------------
 
     private static final class InMemoryProductRepository extends AbstractRepository<Integer, Product> {
         @Override
