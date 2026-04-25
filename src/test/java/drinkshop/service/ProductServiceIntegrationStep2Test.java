@@ -105,4 +105,17 @@ class ProductServiceIntegrationStep2Test {
         // Assert + Verify
         verify(mockRepo, times(1)).update(any(Product.class));
     }
+
+    @Test
+    @DisplayName("Unified tests")
+    void step2_allTests()
+    {
+        tc1_addProduct_valid_saveCalled();
+        reset(mockRepo); setUp();
+        tc2_addProduct_invalidId_validationException();
+        reset(mockRepo); setUp();
+        tc3_addProduct_invalidPrice_validationException();
+        reset(mockRepo); setUp();
+        tc4_updateProduct_valid_updateCalled();
+    }
 }

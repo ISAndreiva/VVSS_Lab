@@ -119,4 +119,17 @@ class ProductServiceUnitTest {
         verify(mockValidator, never()).validate(any(Product.class));
         verify(mockRepo, never()).update(any(Product.class));
     }
+
+    @Test
+    @DisplayName("Unified tests")
+    void step1_allTests()
+    {
+        tc1_addProduct_valid_saveCalled();
+        reset(mockRepo, mockValidator); setUp();
+        tc2_addProduct_invalid_saveNotCalled();
+        reset(mockRepo, mockValidator); setUp();
+        tc3_updateProduct_existing_updateCalled();
+        reset(mockRepo, mockValidator); setUp();
+        tc4_updateProduct_notFound_exceptionThrown();
+    }
 }

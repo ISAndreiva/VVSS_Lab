@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.reset;
 
 /**
  * Step 3 – integrate R (real InMemoryProductRepository) with S + V.
@@ -110,5 +111,18 @@ class ProductServiceIntegrationStep3Test {
         protected Integer getId(Product entity) {
             return entity.getId();
         }
+    }
+
+    @Test
+    @DisplayName("Unified tests")
+    void step3_allTests()
+    {
+        tc1_addProduct_valid_productPersisted();
+        setUp();
+        tc2_addProduct_invalid_repoEmpty();
+        setUp();
+        tc3_updateProduct_valid_changesReflected();
+        setUp();
+        tc4_updateProduct_notFound_exceptionAndRepoUnchanged();
     }
 }
