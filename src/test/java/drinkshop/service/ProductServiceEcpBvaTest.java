@@ -7,10 +7,7 @@ import drinkshop.repository.AbstractRepository;
 import drinkshop.repository.Repository;
 import drinkshop.service.validator.ProductValidator;
 import drinkshop.service.validator.ValidationException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -32,6 +29,7 @@ class ProductServiceEcpBvaTest {
     private ProductService service;
     private Repository<Integer, Product> repo;
 
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @Nested
     @DisplayName("F01 - addProduct")
     class AddProductTests {
@@ -42,7 +40,7 @@ class ProductServiceEcpBvaTest {
             service = new ProductService(repo, new ProductValidator());
         }
 
-        static Stream<Arguments> ecpCases() {
+        Stream<Arguments> ecpCases() {
             return Stream.of(
                     Arguments.of("TC1_ECP", 0, "Nume Valid", 10.0, true, ""),
                     Arguments.of("TC2_ECP", 10, "Nume Valid", 15.0, true, ""),
@@ -56,7 +54,7 @@ class ProductServiceEcpBvaTest {
             );
         }
 
-        static Stream<Arguments> bvaCases() {
+        Stream<Arguments> bvaCases() {
             return Stream.of(
                     Arguments.of("TC1_BVA", 0, "Nume Valid", 10.0, true, ""),
                     Arguments.of("TC2_BVA", 1, "Nume Valid", 10.0, true, ""),
@@ -121,6 +119,7 @@ class ProductServiceEcpBvaTest {
         }
     }
 
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @Nested
     @DisplayName("F02 - updateProduct")
     class UpdateProductTests {
@@ -132,7 +131,7 @@ class ProductServiceEcpBvaTest {
             repo.save(new Product(EXISTING_ID, "Initial", 10.0, VALID_CATEGORY, VALID_TYPE));
         }
 
-        static Stream<Arguments> ecpCases() {
+        Stream<Arguments> ecpCases() {
             return Stream.of(
                     Arguments.of("TC1_ECP", 1, "Nume Valid", 15.0, true, null, ""),
                     Arguments.of("TC2_ECP", 100, "Nume Valid", 15.0, false, IllegalArgumentException.class,"Entity does not exist in repository"),
@@ -141,7 +140,7 @@ class ProductServiceEcpBvaTest {
             );
         }
 
-        static Stream<Arguments> bvaCases() {
+        Stream<Arguments> bvaCases() {
             return Stream.of(
                     Arguments.of("TC1_BVA", 1, "Nume Valid", 10.0, true, null, ""),
                     Arguments.of("TC2_BVA", 100, "Nume Valid", 10.0, false, IllegalArgumentException.class,"Entity does not exist in repository"),
