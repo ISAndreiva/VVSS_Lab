@@ -4,6 +4,7 @@ import net.serenitybdd.core.annotations.findby.FindBy;
 import net.serenitybdd.core.pages.PageObject;
 import net.serenitybdd.core.pages.WebElementFacade;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 
 /**
  * Represents the Demoblaze home page (https://www.demoblaze.com).
@@ -29,22 +30,23 @@ public class HomePage extends PageObject {
     WebElementFacade cartNavLink;
 
     public void navigateToHome() {
+        getDriver().manage().window().maximize();
         getDriver().get(BASE_URL);
         waitABit(1500);
     }
 
     public void clickSignup() {
-        signupNavButton.waitUntilClickable().click();
+        ((JavascriptExecutor) getDriver()).executeScript("arguments[0].click();", signupNavButton);
         waitABit(800);
     }
 
     public void clickLogin() {
-        loginNavButton.waitUntilClickable().click();
+        ((JavascriptExecutor) getDriver()).executeScript("arguments[0].click();", loginNavButton);
         waitABit(800);
     }
 
     public void clickLogout() {
-        logoutNavButton.waitUntilClickable().click();
+        ((JavascriptExecutor) getDriver()).executeScript("arguments[0].click();", logoutNavButton);
         waitABit(800);
     }
 
