@@ -30,7 +30,6 @@ public class HomePage extends PageObject {
     WebElementFacade cartNavLink;
 
     public void navigateToHome() {
-        getDriver().manage().window().maximize();
         getDriver().get(BASE_URL);
         waitABit(1500);
     }
